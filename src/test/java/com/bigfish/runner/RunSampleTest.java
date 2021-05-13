@@ -7,8 +7,11 @@ import io.cucumber.junit.CucumberOptions;
 @CucumberOptions(
 
         features={"src/test/resources/com/bigfish/Nomination/Nominations.feature"},
+
         glue={"com.bigfish.steps"},
         monochrome=true,
+        strict = true,
+       //dryRun = true,
         plugin={"pretty",
                 "html:target/cucumber-htmlreport",
                 "json:target/json-report/cucumber-reportCharityGrants.json"
