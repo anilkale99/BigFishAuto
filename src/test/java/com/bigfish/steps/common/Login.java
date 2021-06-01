@@ -6,10 +6,8 @@ import com.bigfish.pom.locators.CommonLocators;
 import com.bigfish.utilities.PropertiesOperation;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import sun.awt.X11.XSizeHints;
 
 public class Login extends BasePage {
 
@@ -45,9 +43,47 @@ public class Login extends BasePage {
     public void LoginUser(String Username, String Password) throws InterruptedException {
         String userName = PropertiesOperation.getRadicalValueBykey(Username);
         String passWord = PropertiesOperation.getRadicalValueBykey(Password);
+        Thread.sleep(3000);
         enterValue(userName, "username");
         enterValue(passWord, "password");
         clickElement("Login");
+//        if(driver.findElements(CommonLocators.getLocatorForField("MoodboadOps")).size()!=0)
+//        {
+//            driver.switchTo().activeElement();
+//            driver.findElement(CommonLocators.getLocatorForField("MoodboadOps")).click();
+//        }
+//        else
+//        {
+//            System.out.println("Moodboard is already selected");
+//        }
+//
+//		// Click on Anniversary or birthday popup
+//
+//        if (driver.findElements(CommonLocators.getLocatorForField("LoginRecogPopupBtn")).size()!=0)
+//        {
+//          Thread.sleep(2000);
+//		  driver.switchTo().activeElement();
+//		  driver.findElement(CommonLocators.getLocatorForField("LoginRecogPopupBtn")).click();
+//        }
+//
+//		 // Click on Recognition popup
+//
+//        if(driver.findElements(CommonLocators.getLocatorForField("BirthdayAnnivarsaryPopup")).size()!=0)
+//        {
+//          Thread.sleep(2000);
+//		  driver.getWindowHandles();
+//		  driver.findElement(CommonLocators.getLocatorForField("BirthdayAnnivarsaryPopup")).click();
+//        }
+//
+//        System.out.println("Logged in Successfully ");
+
+    }
+    @Given("User Signing out from the Application.")
+    public void LogoutUser() throws InterruptedException {
+        scrollToElement("HomePageProfileImage","click");
+        Thread.sleep(8000);
+        scrollToElement("SignOut","click");
+        System.out.println("User is logged out Successfully");
     }
 
 

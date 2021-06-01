@@ -1,32 +1,30 @@
 package com.bigfish.steps.nominationsSteps;
 
 import io.cucumber.java.en_scouse.An;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 
 import com.bigfish.pom.common.ContextSteps;
 import com.bigfish.pom.locators.CommonLocators;
 import com.bigfish.pom.pages.Nomination.NominationsBasePage;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.util.List;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 public class CreateNominationSteps extends NominationsBasePage {
 
 	WebDriver driver;
-  int randomNumber =0;
+	public static int randomNumber;
+
 	public CreateNominationSteps(ContextSteps contextSteps) {
 		super(contextSteps);
 		driver = contextSteps.getDriver();
 	}
-//Creation steps    
 
+	//Creation steps
 	@When("User on Nominations clicks on new {string} field")
 	public void User_on_nominations_clicks_on_new_nominations_field(String fieldName) throws InterruptedException {
 		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
@@ -37,8 +35,8 @@ public class CreateNominationSteps extends NominationsBasePage {
 	public void User_on_nomination_form_enters_title(String Nomination_Process_Name) {
 		randomNumber = getrandomnumber();
 		driver.findElement(NominationsBasePage.getLocatorForField("title")).clear();
-		enterValue(NominationsBasePage.getLocatorForField("title"), Nomination_Process_Name+randomNumber, "title");
-
+		enterValue(NominationsBasePage.getLocatorForField("title"), Nomination_Process_Name + randomNumber, "title");
+		System.out.println("Nomination_Process_Name+randomNumber");
 	}
 
 	@And("User on nomination form enter {string} in nomination for field")
@@ -51,7 +49,7 @@ public class CreateNominationSteps extends NominationsBasePage {
 	@And("User on nomination form enter {string} in description field")
 	public void User_on_nomination_form_enters_description(String Nomination_guidelines) {
 		driver.findElement(NominationsBasePage.getLocatorForField("description")).clear();
-		enterValue(NominationsBasePage.getLocatorForField("description"), Nomination_guidelines+randomNumber, "description");
+		enterValue(NominationsBasePage.getLocatorForField("description"), Nomination_guidelines + randomNumber, "description");
 	}
 
 	@And("User on nomination form enter {string} in award for field")
@@ -69,12 +67,17 @@ public class CreateNominationSteps extends NominationsBasePage {
 
 	}
 
-	@And("User on nomination form enter {string} and {string} and {int} and {int} and {int} in Criteria field")
-	public void User_on_nomination_form_click_on_criteria_link_and_add_scope(String Scope_rule_Value,
-			String Scope_search_value, int RuleBtnIndex, int RuleValueIndex, int TextFieldIndex)
+	@And("User on nomination form enter {string} and {string} and {string} in Criteria field")
+	public void User_on_nomination_form_click_on_criteria_link_and_add_scope(String Scope_rule_Value, String RuleBtnIndex, String RuleValueIndex, List<String> Scope_search_value_List)
 			throws InterruptedException {
+		Thread.sleep(2000);
 		driver.findElement(CommonLocators.getLocatorForField("Select_Criteria_Link")).click();
-		Setaudiencescope(Scope_rule_Value, Scope_search_value, RuleBtnIndex, RuleValueIndex, TextFieldIndex);
+		SelectRuleFromDropdown(Scope_rule_Value,RuleBtnIndex,RuleValueIndex);
+		for (int i = 0; i < Scope_search_value_List.size(); i++) {
+			String Scope_search_value = Scope_search_value_List.get(i);
+			Setaudiencescope(Scope_rule_Value, Scope_search_value);
+		}
+		driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button[text()='Save Criteria'])["+RuleBtnIndex+"]")).click();
 	}
 
 	@And("User on nomination form enter {string} in Self Nomination Setting field")
@@ -98,33 +101,47 @@ public class CreateNominationSteps extends NominationsBasePage {
 		driver.findElement(NominationsBasePage.getLocatorForField("MessageClosebtn")).click();
 	}
 
-	@And("User on nomination Stage I workflow part of form enters {string} and {string} and {int} and {int} and {int} in Criteria field")
+	@And("User on nomination Stage I workflow part of form enters {string} and {string} and {string} in Criteria field")
 	public void User_on_nomination_form_click_on_criteria_link_and_add_scope_for_stageI(String Scope_rule_Value_Stage1,
-		String Scope_search_value_Stage1, int RuleBtnIndex, int RuleValueIndex, int TextFieldIndex)
-		throws InterruptedException {
-		scrollToElement(By.xpath("//a[text()='Nominations']"), "No_click");
+																						 String RuleBtnIndex, String RuleValueIndex,List<String> Scope_search_value_List)
+			throws InterruptedException {
+		scrollToElement(NominationsBasePage.getLocatorForField("NominationPageTitle"), "No_click");
 		Thread.sleep(3000);
 		driver.findElement(CommonLocators.getLocatorForField("Select_Criteria_Link1")).click();
-		Setaudiencescope(Scope_rule_Value_Stage1, Scope_search_value_Stage1, RuleBtnIndex, RuleValueIndex,
-				TextFieldIndex);
+		SelectRuleFromDropdown(Scope_rule_Value_Stage1,RuleBtnIndex,RuleValueIndex);
+		for (int i = 0; i < Scope_search_value_List.size(); i++) {
+			String Scope_search_value_Stage1 = Scope_search_value_List.get(i);
+			Thread.sleep(2000);
+			Setaudiencescope(Scope_rule_Value_Stage1, Scope_search_value_Stage1);
+		}
+		driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button[text()='Save Criteria'])["+RuleBtnIndex+"]")).click();
 	}
 
-	@And("User on nomination Stage II workflow part of form enters {string} and {string} and {int} and {int} and {int} in Criteria field")
+	@And("User on nomination Stage II workflow part of form enters {string} and {string} and {string} in Criteria field")
 	public void User_on_nomination_form_click_on_criteria_link_and_add_scope_for_stageII(String Scope_rule_Value_Stage2,
-			String Scope_search_value_Stage2, int RuleBtnIndex, int RuleValueIndex, int TextFieldIndex)
+																						  String RuleBtnIndex, String RuleValueIndex,List<String> Scope_search_value_List)
 			throws InterruptedException {
+		Thread.sleep(2000);
 		driver.findElement(CommonLocators.getLocatorForField("Select_Criteria_Link2")).click();
-		Setaudiencescope(Scope_rule_Value_Stage2, Scope_search_value_Stage2, RuleBtnIndex, RuleValueIndex,
-				TextFieldIndex);
+		SelectRuleFromDropdown(Scope_rule_Value_Stage2,RuleBtnIndex,RuleValueIndex);
+		for (int i = 0; i < Scope_search_value_List.size(); i++) {
+			String Scope_search_value_Stage2 = Scope_search_value_List.get(i);
+			Setaudiencescope(Scope_rule_Value_Stage2, Scope_search_value_Stage2);
+		}
+		driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button[text()='Save Criteria'])["+RuleBtnIndex+"]")).click();
 	}
 
-	@And("User on nomination Stage III workflow part of form enters {string} and {string} and {int} and {int} and {int} in Criteria field")
+	@And("User on nomination Stage III workflow part of form enters {string} and {string} and {string} in Criteria field")
 	public void User_on_nomination_form_click_on_criteria_link_and_add_scope_for_stageIII(
-			String Scope_rule_Value_Stage3, String Scope_search_value_Stage3, int RuleBtnIndex, int RuleValueIndex,
-			int TextFieldIndex) throws InterruptedException {
+			String Scope_rule_Value_Stage3, String RuleBtnIndex, String RuleValueIndex, List<String> Scope_search_value_List) throws InterruptedException {
+		Thread.sleep(2000);
 		driver.findElement(CommonLocators.getLocatorForField("Select_Criteria_Link3")).click();
-		Setaudiencescope(Scope_rule_Value_Stage3, Scope_search_value_Stage3, RuleBtnIndex, RuleValueIndex,
-				TextFieldIndex);
+		SelectRuleFromDropdown(Scope_rule_Value_Stage3,RuleBtnIndex,RuleValueIndex);
+		for (int i = 0; i < Scope_search_value_List.size(); i++) {
+			String Scope_search_value_Stage3 = Scope_search_value_List.get(i);
+			Setaudiencescope(Scope_rule_Value_Stage3, Scope_search_value_Stage3);
+		}
+		driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button[text()='Save Criteria'])["+RuleBtnIndex+"]")).click();
 	}
 
 	@And("User on nomination form clicks on {string} button to publish nomination.")
@@ -133,46 +150,38 @@ public class CreateNominationSteps extends NominationsBasePage {
 		WebElement Publish_Btn = driver.findElement(NominationsBasePage.getLocatorForField(fieldName));
 		WaitAndClick(Publish_Btn);
 		driver.switchTo().activeElement();
-		WebElement Priv_Publish_Btn = driver
-				.findElement(NominationsBasePage.getLocatorForField("PriviewPublishButton"));
 		scrollToElement(NominationsBasePage.getLocatorForField("PriviewPublishButton"), "click");
 		Thread.sleep(3000);
-		WaitAndClick(driver.findElement(By.xpath("//div[@class=\"alert-box\"]//button[text()=\"Yes\"]")));
+		WaitAndClick(driver.findElement(NominationsBasePage.getLocatorForField("ConfirmMessageBtn")));
 		driver.findElement(NominationsBasePage.getLocatorForField("MessageClosebtn")).click();
 
 
 	}
 
-//Verification Steps
-	@And ("User on Nominations list page searching {string} nomination and clicks on {string}.")
+	//Verification Steps
+	@And("User on Nominations list page searching {string} nomination and clicks on {string}.")
 	public void Searching_created_nomination(String Nomination_Title, String Action) throws InterruptedException {
-		WebElement open_nomination_btn  = driver.findElement(NominationsBasePage.getLocatorForField("NominationOpenBtnLoc"));
-		WaitForElementToBeVisible(open_nomination_btn);
-		WebElement Action_button = driver.findElement(Loc_for_nomination_name_in_list(Nomination_Title+randomNumber,Action));
-        while (1==1)
-		{
-			if (isElementVisible(Action_button)==true){
-				WaitAndClick(Action_button);
-				break;
-			}
-			else {
-				WebElement  load_btn =driver.findElement(NominationsBasePage.getLocatorForField("load_more_btn"));
-				scrollToElement(NominationsBasePage.getLocatorForField("load_more_btn"),"click");
-				WaitAndClick(load_btn);
-			}
-
-
+		WebElement Nomination_Title_Link = driver.findElement(NominationsBasePage.getLocatorForField("NominationPageTitle"));
+		WaitForElementToBeVisible(Nomination_Title_Link);
+		try {
+			WebElement Action_button = driver.findElement(Loc_for_nomination_name_in_list(Nomination_Title+randomNumber, Action));
+			WaitAndClick(Action_button);
+		} catch (NoSuchElementException e) {
+			WebElement Action_button = driver.findElement(Loc_for_nomination_name_in_list(Nomination_Title+randomNumber, Action));
+			scrollToElement("LoadMoreBtn", "click");
+			WaitAndClick(Action_button);
 		}
 
 	}
 
 	@And("Verify the nomination title field {string} of the created nomination.")
-	public void Verify_the_nomination_title_field_of_the_created_nomination(String Nominationtitle){
+	public void Verify_the_nomination_title_field_of_the_created_nomination(String Nominationtitle) {
 
 	}
+
 	@And("Verify the nomination for field {string} of the created nomination.")
 	public void Verify_the_nomination_For_field_of_the_created_nomination(String NominationFor) {
-		verifyTextDisplayed(NominationFor+randomNumber);
+		verifyTextDisplayed(NominationFor + randomNumber);
 	}
 
 	@And("Verify the nomination guideline field {string} of the created nomination.")
@@ -189,6 +198,7 @@ public class CreateNominationSteps extends NominationsBasePage {
 	public void Verify_the_max_employees_in_a_set_field_of_the_created_nomination() {
 
 	}
+
 	@And("Verify the Self Nomination Setting field {string} of the created nomination.")
 	public void Verify_the_max_nominations_submitted_field_of_the_created_nomination(String MaxNomSetting) {
 		verifyTextDisplayed(MaxNomSetting);
@@ -198,6 +208,7 @@ public class CreateNominationSteps extends NominationsBasePage {
 	public void Verify_the_max_nomination_submitted_field_of_the_created_nomination() {
 
 	}
+
 	@And("Verify the scope of the created nomination")
 	public void Verify_the_scope_of_the_created_nomination() {
 

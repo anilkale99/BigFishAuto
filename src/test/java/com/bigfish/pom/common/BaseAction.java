@@ -100,11 +100,10 @@ public class BaseAction {
 	}
 
 	public void verifyTextDisplayed(String textOnPage) {
-		// WebElement ele = driver.findElement(By.xpath("//*[contains(text(),
-		// '"+opportunityName+"')]"));
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		wait.until(
-				ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(), '" + textOnPage + "')]")));
+				ExpectedConditions.presenceOfElementLocated(By.xpath("(//*[contains(normalize-space(), '"+textOnPage+"')])[last()]")));
+
 	}
 
 	public void clickByLinkText(String linkText) throws InterruptedException {
@@ -167,9 +166,10 @@ public class BaseAction {
 
 	}
 
-	public void SearchAndSelect(WebElement Locator, String value) {
+	public void SearchAndSelect(WebElement Locator, String value) throws InterruptedException {
 		Locator.click();
 		Locator.sendKeys(value);
+		Thread.sleep(2000);
 		Locator.sendKeys(Keys.ARROW_DOWN);
 		Locator.sendKeys(Keys.ENTER);
 	}
@@ -197,7 +197,7 @@ public class BaseAction {
 			driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
 
 		} catch (NoSuchElementException e) {
-
+			System.out.println("Element not visible in Provided time");
 		}
 
 	}
@@ -209,7 +209,7 @@ public class BaseAction {
 			element.click();
 
 		} catch (NoSuchElementException e) {
-
+			System.out.println("Element not visible in time");
 		}
 
 	}
