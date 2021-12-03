@@ -1,217 +1,193 @@
 package com.bigfish.steps.nominationsSteps;
-
-import io.cucumber.java.en_scouse.An;
-import org.openqa.selenium.*;
-
-import com.bigfish.pom.common.ContextSteps;
-import com.bigfish.pom.locators.CommonLocators;
+import com.bigfish.pom.common.BasePage;
+import com.bigfish.pom.pages.Announcement.AnnouncementBasePage;
+import com.bigfish.pom.pages.Discussion.DiscussionBasePage;
 import com.bigfish.pom.pages.Nomination.NominationsBasePage;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.hu.De;
+import org.junit.Assert;
+import org.openqa.selenium.*;
+import com.bigfish.pom.common.ContextSteps;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.When;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import io.cucumber.datatable.DataTable;
+
+
 import java.util.List;
-import java.awt.*;
-import java.util.concurrent.TimeUnit;
 
 public class CreateNominationSteps extends NominationsBasePage {
 
 	WebDriver driver;
-	public static int randomNumber;
+	public static String randomNumber;
 
 	public CreateNominationSteps(ContextSteps contextSteps) {
 		super(contextSteps);
 		driver = contextSteps.getDriver();
 	}
 
+
 	//Creation steps
-	@When("User on Nominations clicks on new {string} field")
-	public void User_on_nominations_clicks_on_new_nominations_field(String fieldName) throws InterruptedException {
-		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-		clickElement(NominationsBasePage.getLocatorForField(fieldName));
+	@And("User on Nominations clicks on new {string} field")
+	public void UserOnNominationsClicksOnNewNominationsField(String fieldName) throws InterruptedException {
+		Thread.sleep(6000);
+		WebElement CreateNomiBtn = driver.findElement(NominationsBasePage.getLocatorForField(fieldName));
+		WaitForElementToBeVisible(CreateNomiBtn);
+		CreateNomiBtn.click();
 	}
 
-	@And("User on nomination form enter {string} in title field")
-	public void User_on_nomination_form_enters_title(String Nomination_Process_Name) {
-		randomNumber = getrandomnumber();
-		driver.findElement(NominationsBasePage.getLocatorForField("title")).clear();
-		enterValue(NominationsBasePage.getLocatorForField("title"), Nomination_Process_Name + randomNumber, "title");
-		System.out.println("Nomination_Process_Name+randomNumber");
-	}
+	@Then("User create nomination Adding Values.")
+	public void userCreateNominationAddingValues(DataTable tableObj) throws Throwable {
+		List<List<String>> NominationValue = tableObj.asLists();
 
-	@And("User on nomination form enter {string} in nomination for field")
-	public void User_on_nomination_form_enters_Nominationfor(String Nomination_for) throws InterruptedException {
+//  Enter value in nomination title
+		String Nomination_Process_Name = NominationValue.get(0).get(1);
+		randomNumber = getrandomnumber(4);
+		driver.findElement(BasePage.getlocatorForFieldsOnDetailpage("title")).clear();
+		enterValue(BasePage.getlocatorForFieldsOnDetailpage("title"), Nomination_Process_Name + randomNumber, "title");
+
+
+//   Enter value in nomination for field
+		String Nomination_for = NominationValue.get(1).get(1);
 		Thread.sleep(6000);
 		WebElement Nomination_for_dropdown = driver.findElement(NominationsBasePage.getLocatorForField("awardName"));
 		NGAngularSearchAndSelectDropdown(Nomination_for_dropdown, Nomination_for);
-	}
 
-	@And("User on nomination form enter {string} in description field")
-	public void User_on_nomination_form_enters_description(String Nomination_guidelines) {
-		driver.findElement(NominationsBasePage.getLocatorForField("description")).clear();
-		enterValue(NominationsBasePage.getLocatorForField("description"), Nomination_guidelines + randomNumber, "description");
-	}
 
-	@And("User on nomination form enter {string} in award for field")
-	public void User_on_nomination_form_enters_Award_for(String Award_For) throws InterruptedException {
-		WebElement Award_for_dropdown = driver.findElement(NominationsBasePage.getLocatorForField("awardType"));
-		NGAngularSearchAndSelectDropdown(Award_for_dropdown, Award_For);
-	}
+//   Enter value in description field
+		String Nomination_guidelines = NominationValue.get(2).get(1);
+		driver.findElement(BasePage.getlocatorForFieldsOnDetailpage("description")).clear();
+		enterValue(BasePage.getlocatorForFieldsOnDetailpage("description"), Nomination_guidelines + randomNumber, "description");
 
-	@And("User on nomination form enter {string} in Max employee in a set field")
-	public void User_on_nomination_form_enters_Max_employee_in_a_set(String Max_Emp_In_Set)
-			throws InterruptedException {
-		WebElement Max_employee_in_set_dropdown = driver
-				.findElement(NominationsBasePage.getLocatorForField("noOfEmployees"));
-		NGAngularSearchAndSelectDropdown(Max_employee_in_set_dropdown, Max_Emp_In_Set);
 
-	}
+//   Enter value in award for field.
+		String Awardfor = NominationValue.get(3).get(1);
+		WebElement Award_for_dropdown = driver.findElement(BasePage.getlocatorForFieldsOnDetailpage("awardType"));
+		NGAngularSearchAndSelectDropdown(Award_for_dropdown, Awardfor);
 
-	@And("User on nomination form enter {string} and {string} and {string} in Criteria field")
-	public void User_on_nomination_form_click_on_criteria_link_and_add_scope(String Scope_rule_Value, String RuleBtnIndex, String RuleValueIndex, List<String> Scope_search_value_List)
-			throws InterruptedException {
-		Thread.sleep(2000);
-		driver.findElement(CommonLocators.getLocatorForField("Select_Criteria_Link")).click();
-		SelectRuleFromDropdown(Scope_rule_Value,RuleBtnIndex,RuleValueIndex);
-		for (int i = 0; i < Scope_search_value_List.size(); i++) {
-			String Scope_search_value = Scope_search_value_List.get(i);
-			Setaudiencescope(Scope_rule_Value, Scope_search_value);
+//   Enter value in	Self Nomination Setting field
+		if (!Awardfor.equals("Predefined Team")) {
+			String Self_Nomination_Setting = NominationValue.get(4).get(1);
+			WebElement Nomi_Setting_dropdown = driver.findElement(NominationsBasePage.getLocatorForField("selfNomination"));
+			NGAngularSearchAndSelectDropdown(Nomi_Setting_dropdown, Self_Nomination_Setting);
 		}
-		driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button[text()='Save Criteria'])["+RuleBtnIndex+"]")).click();
-	}
-
-	@And("User on nomination form enter {string} in Self Nomination Setting field")
-	public void User_on_nomination_form_enters_Self_nomi_setting(String Self_Nomination_Setting)
-			throws InterruptedException {
-		WebElement Nomi_Setting_dropdown = driver.findElement(NominationsBasePage.getLocatorForField("selfNomination"));
-		NGAngularSearchAndSelectDropdown(Nomi_Setting_dropdown, Self_Nomination_Setting);
-	}
-
-	@And("User on nomination form enter {string} in Max Nominations field")
-	public void User_on_nomination_form_enters_Max_nomination(String Max_Nominations) throws InterruptedException {
+//	  Enter Value in Max Nominations field
+		String Max_Nominations = NominationValue.get(5).get(1);
 		WebElement MaxNomi_Setting_dropdown = driver
-				.findElement(NominationsBasePage.getLocatorForField("noOfNominations"));
+				.findElement(BasePage.getlocatorForFieldsOnDetailpage("noOfNominations"));
 		NGAngularSearchAndSelectDropdown(MaxNomi_Setting_dropdown, Max_Nominations);
-	}
 
-	@And("User on nominations form clicks on {string} button")
-	public void User_on_nominations_clicks_on_Save_and_Define_Workflow_button(String fieldName)
+//Enter max employee in a set
+		if (Awardfor.equals("Set of Employees")) {
+			String Max_Emp_In_Set = NominationValue.get(6).get(1);
+			WebElement Max_employee_in_set_dropdown = driver
+					.findElement(NominationsBasePage.getLocatorForField("Max Employees"));
+			NGAngularSearchAndSelectDropdown(Max_employee_in_set_dropdown, Max_Emp_In_Set);
+		}
+	}
+	//User click on save and defined button
+	@And("User on nominations form clicks on save and defined button")
+	public void UserOnNominationsClicksOnSaveAndDefineWorkflowButton()
 			throws InterruptedException {
 		driver.findElement(NominationsBasePage.getLocatorForField("SaveDefButton")).click();
 		driver.findElement(NominationsBasePage.getLocatorForField("MessageClosebtn")).click();
 	}
 
-	@And("User on nomination Stage I workflow part of form enters {string} and {string} and {string} in Criteria field")
-	public void User_on_nomination_form_click_on_criteria_link_and_add_scope_for_stageI(String Scope_rule_Value_Stage1,
-																						 String RuleBtnIndex, String RuleValueIndex,List<String> Scope_search_value_List)
+	@And("User on nomination form clicks on Publish button to publish nomination.")
+	public void UserOnNominationFormClicksOnPublishButtonToPublishNomination()
 			throws InterruptedException {
-		scrollToElement(NominationsBasePage.getLocatorForField("NominationPageTitle"), "No_click");
-		Thread.sleep(3000);
-		driver.findElement(CommonLocators.getLocatorForField("Select_Criteria_Link1")).click();
-		SelectRuleFromDropdown(Scope_rule_Value_Stage1,RuleBtnIndex,RuleValueIndex);
-		for (int i = 0; i < Scope_search_value_List.size(); i++) {
-			String Scope_search_value_Stage1 = Scope_search_value_List.get(i);
-			Thread.sleep(2000);
-			Setaudiencescope(Scope_rule_Value_Stage1, Scope_search_value_Stage1);
-		}
-		driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button[text()='Save Criteria'])["+RuleBtnIndex+"]")).click();
-	}
-
-	@And("User on nomination Stage II workflow part of form enters {string} and {string} and {string} in Criteria field")
-	public void User_on_nomination_form_click_on_criteria_link_and_add_scope_for_stageII(String Scope_rule_Value_Stage2,
-																						  String RuleBtnIndex, String RuleValueIndex,List<String> Scope_search_value_List)
-			throws InterruptedException {
-		Thread.sleep(2000);
-		driver.findElement(CommonLocators.getLocatorForField("Select_Criteria_Link2")).click();
-		SelectRuleFromDropdown(Scope_rule_Value_Stage2,RuleBtnIndex,RuleValueIndex);
-		for (int i = 0; i < Scope_search_value_List.size(); i++) {
-			String Scope_search_value_Stage2 = Scope_search_value_List.get(i);
-			Setaudiencescope(Scope_rule_Value_Stage2, Scope_search_value_Stage2);
-		}
-		driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button[text()='Save Criteria'])["+RuleBtnIndex+"]")).click();
-	}
-
-	@And("User on nomination Stage III workflow part of form enters {string} and {string} and {string} in Criteria field")
-	public void User_on_nomination_form_click_on_criteria_link_and_add_scope_for_stageIII(
-			String Scope_rule_Value_Stage3, String RuleBtnIndex, String RuleValueIndex, List<String> Scope_search_value_List) throws InterruptedException {
-		Thread.sleep(2000);
-		driver.findElement(CommonLocators.getLocatorForField("Select_Criteria_Link3")).click();
-		SelectRuleFromDropdown(Scope_rule_Value_Stage3,RuleBtnIndex,RuleValueIndex);
-		for (int i = 0; i < Scope_search_value_List.size(); i++) {
-			String Scope_search_value_Stage3 = Scope_search_value_List.get(i);
-			Setaudiencescope(Scope_rule_Value_Stage3, Scope_search_value_Stage3);
-		}
-		driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button[text()='Save Criteria'])["+RuleBtnIndex+"]")).click();
-	}
-
-	@And("User on nomination form clicks on {string} button to publish nomination.")
-	public void User_on_nomination_form_clicks_on_publish_button_to_publish_nomination(String fieldName)
-			throws InterruptedException {
-		WebElement Publish_Btn = driver.findElement(NominationsBasePage.getLocatorForField(fieldName));
-		WaitAndClick(Publish_Btn);
+		WebElement Publish_Btn = driver.findElement(NominationsBasePage.getLocatorForField("PublishOrSaveButton"));
+		Publish_Btn.click();
 		driver.switchTo().activeElement();
-		scrollToElement(NominationsBasePage.getLocatorForField("PriviewPublishButton"), "click");
+		WebElement PriviewBtn = driver.findElement(NominationsBasePage.getLocatorForField("PriviewPublishButton"));
+		scrollToElement(PriviewBtn, "click");
 		Thread.sleep(3000);
 		WaitAndClick(driver.findElement(NominationsBasePage.getLocatorForField("ConfirmMessageBtn")));
 		driver.findElement(NominationsBasePage.getLocatorForField("MessageClosebtn")).click();
+	}
 
+	@Then("User Update nomination Adding Values.")
+	public void userUpdateNominationAddingValues(DataTable tableObj) throws Throwable {
+		List<List<String>> NominationUpdatedValue = tableObj.asLists();
+		Thread.sleep(2000);
+		driver.findElement(NominationsBasePage.User_action_choice("EDIT")).click();
+//   Clear and Update value in description field
+		Thread.sleep(15000);
+		String Nomination_guidelines = NominationUpdatedValue.get(0).get(1);
+		WebElement Desc = driver.findElement(BasePage.getlocatorForFieldsOnDetailpage("description"));
+		Desc.clear();
+		Desc.sendKeys(Nomination_guidelines+randomNumber);
+
+//   Clear and Update value in	Self Nomination Setting field
+		String AwardFor = NominationUpdatedValue.get(2).get(1);
+		if (!AwardFor.equals("Predefined Team")) {
+			String Self_Nomination_Setting = NominationUpdatedValue.get(1).get(1);
+			Thread.sleep(4000);
+			WebElement Nomi_Setting_dropdown = driver.findElement(NominationsBasePage.getLocatorForField("selfNomination"));
+			NGAngularSearchAndSelectDropdown(Nomi_Setting_dropdown, Self_Nomination_Setting);
+		}
+//	  Clear and Update value in Max Nominations field
+		String Max_Nominations = NominationUpdatedValue.get(2).get(1);
+		WebElement MaxNomi_Setting_dropdown = driver
+				.findElement(NominationsBasePage.getLocatorForField("Max Nomination"));
+		NGAngularSearchAndSelectDropdown(MaxNomi_Setting_dropdown, Max_Nominations);
+
+//   Clear and Update value in max employee in a set
+		if (AwardFor.equals("Set of Employees")) {
+			String Max_Emp_In_Set = NominationUpdatedValue.get(4).get(1);
+			WebElement Max_employee_in_set_dropdown = driver
+					.findElement(NominationsBasePage.getLocatorForField("Max Employees"));
+			NGAngularSearchAndSelectDropdown(Max_employee_in_set_dropdown, Max_Emp_In_Set);
+		}
 
 	}
 
 	//Verification Steps
 	@And("User on Nominations list page searching {string} nomination and clicks on {string}.")
-	public void Searching_created_nomination(String Nomination_Title, String Action) throws InterruptedException {
+	public void SearchingCreatedNominationInList(String Nomination_Title, String Action) throws InterruptedException {
 		WebElement Nomination_Title_Link = driver.findElement(NominationsBasePage.getLocatorForField("NominationPageTitle"));
 		WaitForElementToBeVisible(Nomination_Title_Link);
 		try {
-			WebElement Action_button = driver.findElement(Loc_for_nomination_name_in_list(Nomination_Title+randomNumber, Action));
+			WebElement Action_button = driver.findElement(Loc_for_nomination_name_in_list(Nomination_Title, Action));
 			WaitAndClick(Action_button);
 		} catch (NoSuchElementException e) {
-			WebElement Action_button = driver.findElement(Loc_for_nomination_name_in_list(Nomination_Title+randomNumber, Action));
+			WebElement Action_button = driver.findElement(Loc_for_nomination_name_in_list(Nomination_Title, Action));
 			scrollToElement("LoadMoreBtn", "click");
 			WaitAndClick(Action_button);
 		}
 
 	}
 
-	@And("Verify the nomination title field {string} of the created nomination.")
-	public void Verify_the_nomination_title_field_of_the_created_nomination(String Nominationtitle) {
+	@And("User on  Nomination details page verify the created nomination details")
+	public void userOnNominationDetailsPageVerifyTheCreatedNominationDetails(DataTable tableObj) throws InterruptedException {
+		List<List<String>> eventValue = tableObj.asLists();
+		//Verify the Nomination nameTitle value
+		Thread.sleep(2000);
+		WebElement ele1 = driver.findElement(CreateNominationSteps.getLocatorForField("getNominationTitle"));
+		String nominationTitle = ele1.getText();
+		System.out.println(nominationTitle);
+		String NominationTitle = eventValue.get(0).get(1);
+		Assert.assertEquals(NominationTitle+randomNumber, nominationTitle);
+
+		//Verify the Nomination Description value
+		WebElement ele2 = driver.findElement(CreateNominationSteps.getLocatorForField("NominationDesc"));
+		String nominationDesc = ele2.getText();
+		System.out.println(nominationDesc);
+		String NominationDesc = eventValue.get(1).get(1);
+		Assert.assertEquals(NominationDesc+randomNumber, nominationDesc);
+
+		//Verify The Award Name Value
+		WebElement ele3 = driver.findElement(CreateNominationSteps.getLocatorForField("AwardName"));
+		String awardName = ele3.getText();
+		System.out.println(awardName);
+		String AwardName = eventValue.get(2).get(1);
+		Assert.assertEquals(AwardName, awardName);
+
+		//Verify The Award For Value
+		WebElement ele4 = driver.findElement(CreateNominationSteps.getLocatorForField("AwardFor"));
+		String awardFor = ele4.getText();
+		System.out.println(awardName);
+		String AwardFor = eventValue.get(3).get(1);
+		Assert.assertEquals(AwardFor, awardFor);
 
 	}
-
-	@And("Verify the nomination for field {string} of the created nomination.")
-	public void Verify_the_nomination_For_field_of_the_created_nomination(String NominationFor) {
-		verifyTextDisplayed(NominationFor + randomNumber);
-	}
-
-	@And("Verify the nomination guideline field {string} of the created nomination.")
-	public void Verify_the_nomination_guideline_of_the_created_nomination() {
-
-	}
-
-	@And("Verify the award for field {string} of the created nomination.")
-	public void Verify_the_award_For_of_the_created_nomination(String AwardFor) {
-		verifyTextDisplayed(AwardFor);
-	}
-
-	@And("Verify the Max Employees In A Set field {string} of the created nomination.")
-	public void Verify_the_max_employees_in_a_set_field_of_the_created_nomination() {
-
-	}
-
-	@And("Verify the Self Nomination Setting field {string} of the created nomination.")
-	public void Verify_the_max_nominations_submitted_field_of_the_created_nomination(String MaxNomSetting) {
-		verifyTextDisplayed(MaxNomSetting);
-	}
-
-	@And("Verify the Max Nominations Submitted field {string} of created nomination.")
-	public void Verify_the_max_nomination_submitted_field_of_the_created_nomination() {
-
-	}
-
-	@And("Verify the scope of the created nomination")
-	public void Verify_the_scope_of_the_created_nomination() {
-
-	}
-
 }
+

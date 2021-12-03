@@ -31,7 +31,7 @@ public class Hooks {
     public void afterScenario() throws InterruptedException{
         System.out.println("This will run after the Scenario");
         Thread.sleep(1000);
-        driver.quit();
+       //driver.quit();
         ContextSteps.initialized=false;
     }
 

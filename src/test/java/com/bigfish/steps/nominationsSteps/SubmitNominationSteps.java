@@ -20,12 +20,13 @@ public class SubmitNominationSteps extends NominationsBasePage {
     }
 
     @And("User on submit nomination form search and select employee or Team employee to nominate.")
-    public void search_and_select_employee_or_team_to_nominate(List<String> Names) throws InterruptedException {
+    public void searchAndSelectEmployeeOrTeamToNominate(List<String> Names) throws InterruptedException {
         for (int i = 0; i < Names.size(); i++) {
             String Name = Names.get(i);
             WebElement Text_Loc = driver.findElement(NominationsBasePage.getLocatorForField("SearchTextField"));
-            Thread.sleep(3000);
+            Thread.sleep(4000);
             SearchAndSelect(Text_Loc, Name);
+            Thread.sleep(4000);
             WebElement Parameter_Text_Field = driver.findElement(By.xpath("//textarea[contains(@placeholder,'Write your comments here')]"));
             WaitAndClick(Parameter_Text_Field);
 
@@ -40,11 +41,11 @@ public class SubmitNominationSteps extends NominationsBasePage {
     }
 
     @And("User on submit nomination form Search and select employee in Set to nominate.")
-    public void search_select_employee_in_set_to_nominate(List<String> Employees_Names) throws InterruptedException {
+    public void searchSelectEmployeeInSetToNominate(List<String> Employees_Names) throws InterruptedException {
         for (int i = 0; i < Employees_Names.size(); i++) {
             String Name = Employees_Names.get(i);
             WebElement Text_Loc = driver.findElement(NominationsBasePage.getLocatorForField("SearchTextField"));
-            Thread.sleep(3000);
+            Thread.sleep(4000);
             SearchAndSelect(Text_Loc, Name);
         }
         WebElement TeamLeadOption = driver.findElement(NominationsBasePage.Select_Teamlead_Radio_Btn(Employees_Names.get(0)));
@@ -65,10 +66,13 @@ public class SubmitNominationSteps extends NominationsBasePage {
 
 
 @And("User Click on Close stage button and close the nomination {string} stage.")
-public void user_click_on_close_button_and_close_the_stage(String StageName) throws InterruptedException {   //Close the Stage
+public void userClickOnCloseButtonAndCloseTheStage(String StageName) throws InterruptedException {   //Close the Stage
+    Thread.sleep(4000);
     try {
-        scrollToElement(NominationsBasePage.Stage_Header_Button(StageName), "click");
-    } catch (ElementClickInterceptedException e) {
+        WebElement StageNameBtn = driver.findElement(NominationsBasePage.Stage_Header_Button(StageName));
+        scrollToElement(StageNameBtn, "click");
+    }
+    catch (Exception e) {
         System.out.println("Header is already selected.");
     }
     WebElement Close_Btn = driver.findElement(NominationsBasePage.getLocatorForField("CloseButton"));
@@ -82,10 +86,10 @@ public void user_click_on_close_button_and_close_the_stage(String StageName) thr
    }
 
     @And("User clicks on move nominee button and select option {string} and move nominees")
-    public void close_and_move_the_Users_to_another_stage(String Move_Nominee_Option, List<String> Employees_Names) throws InterruptedException
+    public void closeAndMoveTheUsersToAnotherStage(String Move_Nominee_Option, List<String> Employees_Names) throws InterruptedException
 {   //Close the Stage
 
-        //Select the User to be Moveforword or move all
+        //Select the User to be MoveForword or move all
         WebElement Move_Nominee_Btn = driver.findElement(NominationsBasePage.getLocatorForField("MoveNomineeButton"));
         WaitAndClick(Move_Nominee_Btn);
 

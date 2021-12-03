@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 @SuppressWarnings("unused")
-public class PropertiesOperation {
+public class  PropertiesOperation {
 
 	/**
 	 * Generic values will be handled in this class

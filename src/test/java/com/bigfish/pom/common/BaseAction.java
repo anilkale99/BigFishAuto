@@ -1,12 +1,12 @@
 package com.bigfish.pom.common;
 
-import com.bigfish.pom.common.ContextSteps;
+import com.bigfish.pom.navigation.LeftNavigation;
 import com.bigfish.utilities.DateSelector;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -15,11 +15,14 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.swing.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
 
 public class BaseAction {
 
@@ -49,7 +52,8 @@ public class BaseAction {
 	}
 
 	public void clickElement(By locator) throws InterruptedException {
-		scrollToElement(locator, "click");
+		WebElement ele = driver.findElement(locator);
+		scrollToElement(ele, "click");
 		// driver.findElement(locator).click();
 	}
 
@@ -70,19 +74,26 @@ public class BaseAction {
 		driver.navigate().to(ele.getAttribute("href"));
 	}
 
-	public void scrollToElement(By locator, String action) throws InterruptedException {
-		Thread.sleep(1000);
-		WebElement ele = driver.findElement(locator);
+	public void scrollToLinkAndNavigate(String locator) throws InterruptedException {
+		Thread.sleep(4000);
+		WebElement ele = driver.findElement(LeftNavigation.GetLocatorForConfigNavigationLink(locator));
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", ele);
+		Thread.sleep(2000);
+		driver.navigate().to(ele.getAttribute("href"));
+	}
+
+	public void scrollToElement(WebElement locator, String action) throws InterruptedException {
+		Thread.sleep(1000);
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", locator);
 		Thread.sleep(1000);
 		if (action.equals("click")) {
-			ele.click();
+			locator.click();
 		}
 	}
 
-	public void selectValue(String value, String dropdownName) {
-		System.out.println("Selecting value: " + value + " from dropdown: " + dropdownName);
-		Select dd = new Select(driver.findElement(CommonLocators.getLocatorForField(dropdownName)));
+	public void selectValue(String value, String dropdownFormControlName) {
+		System.out.println("Selecting value: " + value + " from dropdown: ");
+		Select dd = new Select(driver.findElement(BasePage.getlocatorForFieldsOnDetailpage(dropdownFormControlName)));
 		dd.selectByVisibleText(value);
 	}
 
@@ -97,13 +108,12 @@ public class BaseAction {
 		String absolutePath = f.getAbsolutePath();
 		System.out.println("Absolute  path: " + absolutePath);
 		driver.findElement(locator).sendKeys(absolutePath);
+
 	}
 
 	public void verifyTextDisplayed(String textOnPage) {
 		WebDriverWait wait = new WebDriverWait(driver, 20);
-		wait.until(
-				ExpectedConditions.presenceOfElementLocated(By.xpath("(//*[contains(normalize-space(), '"+textOnPage+"')])[last()]")));
-
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(), '" + textOnPage + "')]")));
 	}
 
 	public void clickByLinkText(String linkText) throws InterruptedException {
@@ -112,8 +122,8 @@ public class BaseAction {
 	}
 
 	public void clickByPartialLinkText(String linkText) throws InterruptedException {
-		// driver.findElement(By.linkText(linkText)).click();
-		scrollToElement(By.partialLinkText(linkText), "click");
+		WebElement LinkTxtLoc = driver.findElement(By.partialLinkText(linkText));
+		scrollToElement(LinkTxtLoc, "click");
 	}
 
 	public void validateSubMenuOptions(List<String> subMenuOptions) throws InterruptedException {
@@ -152,13 +162,22 @@ public class BaseAction {
 		DateSelector.selectDate(driver, date, datePicker);
 	}
 
+	public void TypeDateInTxtField(String DateFor, String DateTxt) throws InterruptedException {
+		Thread.sleep(500);
+		WebElement DateField = driver.findElement(BasePage.getlocatorForFieldsOnDetailpage(DateFor));
+		DateField.click();
+		DateField.clear();
+		DateField.sendKeys(DateTxt);
+		DateField.sendKeys(Keys.ENTER);
+	}
+
 	public void NGAngularSearchAndSelectDropdown(WebElement Locator, String value) throws InterruptedException {
 		WebDriverWait wait = new WebDriverWait(driver, 50);
 		wait.until(ExpectedConditions.elementToBeClickable(Locator)).click();
 		WebElement Auto_suggest_Locator = driver.findElement(By.xpath(
-				"//div[@class=\"ui-select-container dropdown open\"]//input | //div[@aria-labelledby='mySmallModalLabel']//input"));
+				"//div[contains(@class,\"ui-select-container dropdown open\")]//input | //div[@aria-labelledby='mySmallModalLabel']//input"));
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-				"//div[@class=\"ui-select-container dropdown open\"]//input | //div[@aria-labelledby='mySmallModalLabel']//input")))
+				"//div[contains(@class,\"ui-select-container dropdown open\")]//input | //div[@aria-labelledby='mySmallModalLabel']//input")))
 				.sendKeys(value);
 		Thread.sleep(1000);
 		Auto_suggest_Locator.sendKeys(Keys.ARROW_DOWN);
@@ -173,6 +192,7 @@ public class BaseAction {
 		Locator.sendKeys(Keys.ARROW_DOWN);
 		Locator.sendKeys(Keys.ENTER);
 	}
+
 	public boolean isElementPresent(By by) {
 		try {
 			driver.findElements(by);
@@ -182,14 +202,15 @@ public class BaseAction {
 		}
 	}
 
-	public boolean isElementVisible(WebElement element) {
+	public boolean isElementVisible(By element) {
 		try {
-			element.isDisplayed();
+			driver.findElement(element).isDisplayed();
 			return true;
-		} catch (NoSuchElementException e) {
+		} catch (org.openqa.selenium.NoSuchElementException e) {
 			return false;
 		}
 	}
+
 
 	public void WaitForElementToBeVisible(WebElement element) {
 		try {
@@ -214,8 +235,31 @@ public class BaseAction {
 
 	}
 
-	public static int getrandomnumber(){
-         return new Random().nextInt(9999);
+//	public static int getrandomnumber()
+//	{
+//		return new Random().nextInt(9999);
+//	}
+
+	public static String getrandomnumber(int count) {
+		String random=RandomStringUtils.randomNumeric(count);
+		return random;
 	}
 
+	public List<String> SplitString(String Value , String Splitvalue) {
+		String[] myArray = Value.split(Splitvalue);
+		List<String> myList = new ArrayList<>();
+		for (String str : myArray) {
+			myList.add(str);
+		}
+		System.out.print(myList);
+		return myList;
+	}
 }
+//	public String HandlePseudoElementLocator(String RootclassLocator) throws InterruptedException {
+//		String script = "return window.getComputedStyle(document.querySelector('"+RootclassLocator+"'),':after').getPropertyValue('content')";
+//		Thread.sleep(3000);
+//		JavascriptExecutor js = (JavascriptExecutor) driver;
+//		String content = (String) js.executeScript(script);
+//		return content;
+//	}
+//}

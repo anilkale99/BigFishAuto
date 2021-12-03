@@ -1,14 +1,8 @@
 package com.bigfish.pom.pages.Nomination;
 import com.bigfish.pom.common.ContextSteps;
-import com.bigfish.pom.locators.CommonLocators;
 
 import org.openqa.selenium.*;
 import  com.bigfish.pom.common.*;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.internal.BaseAction;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 
 
 public class NominationsBasePage extends BasePage{
@@ -26,31 +20,26 @@ public class NominationsBasePage extends BasePage{
             case "NewNominationBtn":
                 LOCATOR_VALUE = By.xpath("//button[@class=\"btn btn-info\"]");
                 break;
-            case "title":
-                LOCATOR_VALUE = By.xpath("//input[@formcontrolname='"+fieldName+"']");
-                break;
+
             case "awardName":
-                LOCATOR_VALUE = By.xpath("//div[@class=\"ui-select-container dropdown open\"]//span[text()=\"No award selected\"]");
+                LOCATOR_VALUE = By.xpath("//div[contains(@class,\"ui-select-container dropdown open\")]//span[text()=\"No award selected\"]");
                 break;
-            case "description":
-                LOCATOR_VALUE = By.xpath("//textarea[@formcontrolname='"+fieldName+"']");
-                break;
-            case "awardType":
-                LOCATOR_VALUE = By.xpath("//ng-select[@formcontrolname='"+fieldName+"']");
-                break;
+
             case "selfNomination":
-                LOCATOR_VALUE = By.xpath("//ng-select[@formcontrolname='"+fieldName+"']");
+                LOCATOR_VALUE = By.xpath("//ng-select[@formcontrolname='"+fieldName+"']/div[1]");
                 break;
-            case "noOfNominations":
-                LOCATOR_VALUE = By.xpath("//ng-select[@formcontrolname='"+fieldName+"']");
+
+            case "Max Employees":
+                LOCATOR_VALUE= By.xpath("//label[contains(text(),'Max Employees')]/following-sibling::div/ng-select//span[contains(@class,\" ui-select-toggle\")]");
                 break;
-            case "noOfEmployees":
-                LOCATOR_VALUE= By.xpath("//ng-select[@formcontrolname=\"noOfEmployees\"]//span[contains(@class,'ui-select-toggle')]");
+            case "Max Nomination":
+                LOCATOR_VALUE= By.xpath("//*[@formcontrolname='noOfNominations']/div");
                 break;
+
              case "SaveDefButton":
-                LOCATOR_VALUE = By.xpath("//div[@class=\"pt-lg\"]/button[text()='Save & Define Workflow']");
+                LOCATOR_VALUE = By.xpath("//div[contains(@class,\"pt-lg\")]/button[text()='Save & Define Workflow']");
                 break;
-            case "PublishButton":
+            case "PublishOrSaveButton":
                 LOCATOR_VALUE = By.xpath("//button[@type=\"submit\"]");
                 break;
             case  "PriviewPublishButton":
@@ -63,7 +52,7 @@ public class NominationsBasePage extends BasePage{
                 LOCATOR_VALUE=By.xpath("//button[contains(text(),'Load More')]");
                 break;
             case "NominationSearchTextField":
-                LOCATOR_VALUE=By.xpath("//div[@aria-hidden=\"false\"]//input[contains(@placeholder, 'Search by Name')]");
+                LOCATOR_VALUE=By.xpath("(//div[@aria-hidden=\"false\"]//input[contains(@placeholder, 'Search by Name')])[last()]");
                 break;
             case "SearchTextField":
                 LOCATOR_VALUE=By.xpath("//input[contains(@placeholder, 'Search by Name')]");
@@ -75,7 +64,7 @@ public class NominationsBasePage extends BasePage{
                 LOCATOR_VALUE=By.xpath("//button[contains(text(),'Submit')]");
                 break;
             case "MessageClosebtn":
-                LOCATOR_VALUE=By.xpath("//div[@class=\"toast-close-button\"]");
+                LOCATOR_VALUE=By.xpath("//div[@class=\"toast-content\"]/div[text()=\"Success\"]");
                 break;
             case "ConfirmMessageBtn":
                 LOCATOR_VALUE=By.xpath("//div[@class=\"alert-box\"]//button[text()=\"Yes\"]");
@@ -87,7 +76,7 @@ public class NominationsBasePage extends BasePage{
                 LOCATOR_VALUE=By.xpath("//textarea[not(contains(@placeholder, 'Add Your Voting Comment'))]");
                 break;
             case "CloseButton":
-                LOCATOR_VALUE=By.xpath("//td[@class=\"table-status-for-buttons\"]/button[contains(text(),'CLOSE')]");
+                LOCATOR_VALUE=By.xpath("//td[contains(@class,\"table-status-for-buttons\")]/button[contains(text(),'CLOSE')]");
                 break;
             case "CloseStageButton":
                 LOCATOR_VALUE=By.xpath("//div[@class=\"modal-footer\"]/button[contains(text(),'Close Stage')]");
@@ -113,12 +102,23 @@ public class NominationsBasePage extends BasePage{
             case "VotingCommentField":
                 LOCATOR_VALUE=By.xpath("//textarea[not(contains(@placeholder, 'Add Your Validation Comment'))]");
                 break;
-            case "GiveAwardButton":
-                LOCATOR_VALUE=By.xpath("//td[@class=\"table-status-for-buttons\"]/button[contains(text(),'GIVE AWARD')]");
+            case "ViewDetailLink":
+                LOCATOR_VALUE=By.xpath("//thead[@class=\"table-nominee\"]/following-sibling::tbody/tr/td[10]/a");
                 break;
-
+            case "getNominationTitle":
+                LOCATOR_VALUE=By.xpath("//div[@class=\"header\"]");
+                break;
+            case "NominationDesc":
+                LOCATOR_VALUE=By.xpath("//span[contains(@class,\"desc\")]/span");
+                break;
+            case "AwardName":
+                LOCATOR_VALUE=By.xpath("//span[text()=\"AWARD\"]/following-sibling::h4");
+                break;
+            case "AwardFor":
+                LOCATOR_VALUE=By.xpath("//span[text()=\"AWARD FOR\"]/following-sibling::h4 ");
+                break;
             default:
-                System.out.println("Invalid case value: " + fieldName);   //textarea[not(contains(@placeholder, 'Add Your Validation Comment'))]
+                System.out.println("Invalid case value: " + fieldName);
         }
         return LOCATOR_VALUE;
     }
@@ -138,7 +138,7 @@ public class NominationsBasePage extends BasePage{
   public static By User_action_choice(String Action)
   {
       By DYNAMIC_LOCATOR_VALUE = null;
-      DYNAMIC_LOCATOR_VALUE=By.xpath("//button[text()='"+Action+"']");
+      DYNAMIC_LOCATOR_VALUE=By.xpath("(//button[contains(text(),'"+Action+"')])[1]");
       return DYNAMIC_LOCATOR_VALUE;
   }
   public static By Validation_View_Details_Link(String Employee_Name)
@@ -164,7 +164,7 @@ public class NominationsBasePage extends BasePage{
     public static By Select_Employees_Checkbox(String EmployesName)
     {
         By DYNAMIC_LOCATOR_VALUE = null;
-        DYNAMIC_LOCATOR_VALUE=By.xpath("//td[3][contains(text(),'"+EmployesName+"')]/ancestor::tr//div[@class=\"checkbox c-checkbox\"]");
+        DYNAMIC_LOCATOR_VALUE=By.xpath("//td[3][contains(text(),'"+EmployesName+"')]/ancestor::tr//div[contains(@class,\"checkbox c-checkbox\")]");
         return DYNAMIC_LOCATOR_VALUE;
     }
     public static By Stage_Header_Button(String Stage_Name)
@@ -185,44 +185,21 @@ public class NominationsBasePage extends BasePage{
 
     }
 
-//Methods
-   public void SelectRuleFromDropdown( String value, String Rule_btn_Active_index, String Rule_value_Active_index) throws InterruptedException {
-		driver.switchTo().activeElement();
-		Thread.sleep(2000);
-		
-		WebElement Locator = driver.findElement(By.xpath("(//div[@aria-labelledby='mySmallModalLabel']//button/span[text()='Add Rules'])[" + Rule_btn_Active_index + "]"));
-		Locator.click();
-		
-		WebElement Value_Locator = driver.findElement(By.xpath("(//ul[@class='dropdown-menu animated'])[" + Rule_value_Active_index + "]/li/a[contains(text(),'"+value+"')]"));
-		 Actions builder = new Actions(driver);                            
-	     builder.moveToElement( Value_Locator ).click( Value_Locator );
-	     builder.perform();
+    public  static By getLocatorForViewDetailLinkForSetOfEmp(String TeamLeadName){
+        By DYNAMIC_LOCATOR_VALUE = null;
+        DYNAMIC_LOCATOR_VALUE = By.xpath("//span[1][contains(text(),'"+TeamLeadName+"')]/ancestor::tbody/tr/td[3]/a");
+        return DYNAMIC_LOCATOR_VALUE;
+
     }
-    
-    public void Setaudiencescope(String Rule_value, String Search_value) throws InterruptedException {
-        if (!"SKIP".equals(Search_value)){
-            Thread.sleep(1000);
- 			WebElement Text_field = driver.findElement(NominationsBasePage.getLocatorForField("NominationSearchTextField"));
- 			WebDriverWait wait = new WebDriverWait(driver,50);
- 			wait.until(ExpectedConditions.elementToBeClickable(Text_field)).click();
- 			
- 			Text_field.sendKeys(Search_value);
- 			Thread.sleep(2000);
- 			
- 			Text_field.sendKeys(Keys.ARROW_DOWN);
- 			Text_field.sendKeys(Keys.ENTER);
 
- 		}
- 		else {
- 			System.out.println("The Audience Scope" + Rule_value + "is selected");
- 		}
+    public  static By getLocatorForCheckboxForSetOfEmp(String TeamLeadName){
+        By DYNAMIC_LOCATOR_VALUE = null;
+        DYNAMIC_LOCATOR_VALUE = By.xpath("//span[1][contains(text(),'"+TeamLeadName+"')]/ancestor::tbody/tr/td[1]//span[@class=\"fa fa-check\"]");
+        return DYNAMIC_LOCATOR_VALUE;
 
- 	}
+    }
 
 
-    public void Verifyaddedscope() {
-
-	}
     
 
 }
