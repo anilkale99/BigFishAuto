@@ -1,5 +1,6 @@
 package com.bigfish.steps.common;
 
+import com.bigfish.pom.locators.CommonLocators;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -24,30 +25,13 @@ public class Hooks {
     public void beforeScenario() throws InterruptedException{
         System.out.println("This will run before the Scenario");
         driver.get(PropertiesOperation.getRadicalValueBykey("url"));
-//		driver.findElement(By.xpath("//button[@id='details-button']")).click();
-//		Thread.sleep(3000);
-//		driver.findElement(By.xpath("//a[@id='proceed-link']")).click();
-    } 
+ }
  
     @After
     public void afterScenario() throws InterruptedException{
         System.out.println("This will run after the Scenario");
-//        try{
-//            Thread.sleep(2000);
-//            WebElement ele = driver.findElement(By.linkText("Sign out"));
-//            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", ele);
-//            Thread.sleep(2000);
-//            ele.click();
-//        } catch (Exception e) {
-//            Thread.sleep(2000);
-//            driver.navigate().refresh();
-//            WebElement ele = driver.findElement(By.linkText("Sign out"));
-//            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", ele);
-//            Thread.sleep(2000);
-//            ele.click();
-//        }
-//        Thread.sleep(1000);
-        driver.quit();
+        Thread.sleep(1000);
+       //driver.quit();
         ContextSteps.initialized=false;
     }
 

@@ -6,17 +6,21 @@ import io.cucumber.junit.CucumberOptions;
 @RunWith(Cucumber.class)
 @CucumberOptions(
 
-        features={"src/test/resources/com/bigfish/Nomination/Nominations.feature"},
+        features={"src/test/resources"},
         glue={"com.bigfish.steps"},
         monochrome=true,
+        strict = true,
+        // dryRun = false,
         plugin={"pretty",
                 "html:target/cucumber-htmlreport",
                 "json:target/json-report/cucumber-reportCharityGrants.json"
-        }
-        //,tags = {"@mdRegression"}
+        },
+        //tags = {"(@Nominations or @Recognition or @Announcement or @Campaign or @Discussion or @Events or @Groups)"}
+        tags={"@Regression"}
 
 
 )
 
 public class RunSampleTest {
+
 }

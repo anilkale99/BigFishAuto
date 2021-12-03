@@ -1,47 +1,39 @@
 package com.bigfish.utilities;
 
+import com.bigfish.pom.common.BasePage;
+import com.bigfish.pom.common.ContextSteps;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class DateSelector {
+public class DateSelector extends BasePage {
+    WebDriver driver;
+    public DateSelector(ContextSteps contextSteps) {
+        super(contextSteps);
+        driver = contextSteps.getDriver();
+    }
 
     public static void selectDate(WebDriver driver, String date, String datePickerValue) throws Exception {
-        
-//		try {
-//			driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-//			driver.findElement(By.xpath("//input[@id='start_dts']")).click();
-//		} catch (Exception e) {
-//			try {
-//				driver.findElement(By.xpath("//input[@id='apply_by_dts']")).click();
-//			} catch (Exception e1) {
-//				driver.findElement(By.xpath("//input[@id='event_dts']")).click();
-//			}
-//		}finally{
-//			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-//		}
+
         Thread.sleep(2000);
         switch (datePickerValue){
-            case "start_dts": driver.findElement(By.xpath("//input[@id='start_dts']")).click(); break;
-            case "apply_by_dts": driver.findElement(By.xpath("//input[@id='apply_by_dts']")).click(); break;
-            case "event_dts": driver.findElement(By.xpath("//input[@id='event_dts']")).click(); break;
-            case "expected_payment_date": driver.findElement(By.xpath("//input[@id='expected_payment_date']")).click(); break;
+            case "start_dts": driver.findElement(By.xpath("//input[@formcontrolname=\"startDate\"]")).click(); break;
+            case "end_dts": driver.findElement(By.xpath("//input[@formcontrolname=\"endDate\"]")).click(); break;
             default:
                 System.out.println("Invalid datepicker value provided");
         }
 	
-        String monthYearTextLocator = "//*[@class='datepicker-days']/table/thead/tr[2]/th[2]";
-        String nextButton = "//*[@class='datepicker-days']/table/thead/tr[2]/th[3]";
-        String allRowsLocator = "//*[@class='datepicker-days']/table/tbody/tr";
+        String monthYearTextLocator = "//*[@class=\"bs-datepicker-head\"]//button";
+        String nextButton = "//*[@class=\"bs-datepicker-head\"]//button[4]";
+        String allRowsLocator = "//*[@class=\"bs-datepicker-body\"]/table/tbody/tr";
         String[] values = date.split(" ");
         String day = values[0];
         String monthYear = values[1] + " " + values[2];
         String monthYearOnCalendar = driver.findElement(By.xpath(monthYearTextLocator)).getText();
         System.out.println("day: " + day);
         System.out.println("monthyear: " + monthYear);
-        System.out.println("monthyearoncalendar: " + monthYearOnCalendar);
+        System.out.println("monthoncalendar: " + monthYearOnCalendar );
 
         while(! monthYear.equals(monthYearOnCalendar)) {
             driver.findElement(By.xpath(nextButton)).click();
@@ -65,4 +57,6 @@ public class DateSelector {
             }
         }
     }
+
+
 }
